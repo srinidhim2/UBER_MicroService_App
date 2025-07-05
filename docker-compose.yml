@@ -7,7 +7,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: qwerty
     volumes:
-    - /home/srinidhi/Desktop/data:/data/db
+    - /home/srinidhi/Desktop/data/uber_mongo_db:/data/db
   
   mongo-express:
     image: mongo-express
