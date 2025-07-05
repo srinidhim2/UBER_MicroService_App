@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
-const userRouter = require('./router/user.router');
+const captainRouter = require('./router/captain.router');
 const handleErrors = require('./middlewares/error-handler');
 const apiRouter = express.Router()
 const cookieParser = require('cookie-parser')
@@ -12,8 +12,8 @@ app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.use(morgan('dev'));
-app.use('/',userRouter)
-// apiRouter.use('/user', userRouter);
+app.use('/',captainRouter)
+// apiRouter.use('/captain', captainRouter);
 // app.get('/',(req,res)=>{
 //   res.json({'message':'Hello'})
 // })
