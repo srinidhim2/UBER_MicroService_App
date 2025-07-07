@@ -6,6 +6,7 @@ const HttpError = require('../utils/httpError')
 const blacklisttokenModel = require('../models/blacklisttoken.model')
 const {subscribeToQueue,publishToQueue} = require('../service/rabbit')
 
+const pendingRequests = []
 const validateCaptain = (captain)=>{
     const captainSchema = joi.object({
         name: joi.string().required(),
@@ -101,6 +102,20 @@ module.exports.toggleAvailability= async (req,res,next)=>{
     }
 }
 
+module.exports.waitForNewRide =async(req,res,next)=>{
+    req.setTimeout(30000,()=>{
+        res.status(204).end()
+    })
+    pendingRequests.push(res)
+}
 
 
-subscribeToQueue("new-ride",data=>console.log('QUEUE DATA',JSON.parse(data)))
+
+subscribeToQueue("new-ride",(data)=>{
+    const rideData = JSON.parse(data)
+    // console.log('QUEUE DATA',JSON.parse(data))
+    pendingRequests.forEach(res=>{
+        res.json(rideData)
+    })
+    pendingRequests.length = 0
+})

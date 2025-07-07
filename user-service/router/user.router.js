@@ -12,5 +12,7 @@ userRouter.post('/login',userController.login)
 userRouter.post('/logout',userController.logout)
 userRouter.get('/profile', authMiddleware.userAuth, userController.profile);
 // userRouter.get('/accepted-ride',authMiddleware.userAuth, userController.acceptedRide);
+userRouter.get('/accepted-ride',authMiddleware.userAuth,userController.acceptedRide)
+
 
 module.exports = userRouter

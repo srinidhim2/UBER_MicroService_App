@@ -5,7 +5,7 @@ const rideController = require('../controller/ride.controller')
 
 
 router.post('/create-ride', authMiddleware.userAuth, rideController.createRide)
-// router.put('/accept-ride',authMiddleware.captainAuth, rideController.acceptRide)
+router.put('/accept-ride',authMiddleware.captainAuth, rideController.acceptRide)
 
 
 module.exports = router;

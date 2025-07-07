@@ -3,7 +3,10 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const joi = require('joi')
 const HttpError = require('../utils/httpError')
-const blacklisttokenModel = require('../models/blacklisttoken.model')
+const blacklisttokenModel = require('../models/blacklisttoken.model');
+const { subscribeToQueue } = require('../../captain-service/service/rabbit');
+const EventEmitter = require('events')
+const rideEventEmitter = new EventEmitter();
 
 const validateUser = (user)=>{
     const userSchema = joi.object({
@@ -84,3 +87,22 @@ module.exports.profile = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
+
+module.exports.acceptedRide = (req,res,next)=>{
+    try{
+        rideEventEmitter.once('ride-accepted',(data)=>{
+            res.send(data)
+        })
+        setTimeout(()=>{
+            res.status(204).send()
+        },30000)
+    }
+    catch(error){
+        next(error)
+    }
+}
+
+subscribeToQueue('ride-accepted', async(msg)=>{
+    const data = JSON.parse(msg)
+    rideEventEmitter.emit('ride-accepted',data)
+})

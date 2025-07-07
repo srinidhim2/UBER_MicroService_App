@@ -6,7 +6,7 @@ const blacklisttokenModel = require('../models/blacklisttoken.model');
 module.exports.captainAuth = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        const token = req.cookies.token || (authHeader && authHeader.split(' ')[1]);
+        const token =  (authHeader && authHeader.split(' ')[1]) || req.cookies.token
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized' });
         }

@@ -12,5 +12,6 @@ captainRouter.post('/login',captainController.login)
 captainRouter.post('/logout',captainController.logout)
 captainRouter.get('/profile', authMiddleware.captainAuth, captainController.profile);
 // captainRouter.get('/accepted-ride',authMiddleware.captainAuth, captainController.acceptedRide);
+captainRouter.get('/new-ride',authMiddleware.captainAuth,captainController.waitForNewRide)
 captainRouter.patch('/toggleAvailability',authMiddleware.captainAuth,captainController.toggleAvailability)
 module.exports = captainRouter
