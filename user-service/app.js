@@ -6,7 +6,9 @@ const handleErrors = require('./middlewares/error-handler');
 const apiRouter = express.Router()
 const cookieParser = require('cookie-parser')
 const connect = require('./db/db')
+const rabbit = require('./service/rabbit')
 
+rabbit.connect()
 connect()
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))

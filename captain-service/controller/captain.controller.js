@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const joi = require('joi')
 const HttpError = require('../utils/httpError')
 const blacklisttokenModel = require('../models/blacklisttoken.model')
+const {subscribeToQueue,publishToQueue} = require('../service/rabbit')
 
 const validateCaptain = (captain)=>{
     const captainSchema = joi.object({
@@ -99,3 +100,7 @@ module.exports.toggleAvailability= async (req,res,next)=>{
         next(error)
     }
 }
+
+
+
+subscribeToQueue("new-ride",data=>console.log('QUEUE DATA',JSON.parse(data)))
