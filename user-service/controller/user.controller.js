@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const joi = require('joi')
 const HttpError = require('../utils/httpError')
 const blacklisttokenModel = require('../models/blacklisttoken.model');
-const { subscribeToQueue } = require('../../captain-service/service/rabbit');
+const { subscribeToQueue } = require('../service/rabbit');
 const EventEmitter = require('events')
 const rideEventEmitter = new EventEmitter();
 
@@ -98,7 +98,7 @@ module.exports.acceptedRide = (req,res,next)=>{
 
         setTimeout(() => {
             if (!res.headersSent) {
-                res.status(204).send();
+                return res.status(204).send();
             }
         }, 30000);
     }

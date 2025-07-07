@@ -1,19 +1,75 @@
+version: '3.8'
+
 services:
   mongo:
     image: mongo
     ports:
-    - 27019:27017
+      - "27019:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: qwerty
     volumes:
-    - /home/srinidhi/Desktop/data/uber_mongo_db:/data/db
-  
+      - ./data/uber_mongo_db:/data/db
+
   mongo-express:
     image: mongo-express
     ports:
-    - 8081:8081
+      - "8081:8081"
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
       ME_CONFIG_MONGODB_ADMINPASSWORD: qwerty
       ME_CONFIG_MONGODB_URL: mongodb://admin:qwerty@mongo:27017
+
+  user:
+    build: ./user-service
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      JWT_SECRET: 123
+      MONGO_URL: mongodb://admin:qwerty@mongo:27017/user?authSource=admin
+      RABBIT_URL: amqps://jrvghfxn:D2OuBkB32k6vS1JKd-Qh7yCcY-5ldC-k@leopard.lmq.cloudamqp.com/jrvghfxn
+    depends_on:
+      - mongo
+
+  captain:
+    build: ./captain-service
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      JWT_SECRET: 123
+      MONGO_URL: mongodb://admin:qwerty@mongo:27017/captain?authSource=admin
+      RABBIT_URL: amqps://jrvghfxn:D2OuBkB32k6vS1JKd-Qh7yCcY-5ldC-k@leopard.lmq.cloudamqp.com/jrvghfxn
+    depends_on:
+      - mongo
+
+  ride:
+    build: ./ride-service
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+      JWT_SECRET: 123
+      MONGO_URL: mongodb://admin:qwerty@mongo:27017/ride?authSource=admin
+      RABBIT_URL: amqps://jrvghfxn:D2OuBkB32k6vS1JKd-Qh7yCcY-5ldC-k@leopard.lmq.cloudamqp.com/jrvghfxn
+      BASE_URL: http://gateway:3000
+    depends_on:
+      - mongo
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    environment:
+      GATEWAY_PORT: 3000
+      USER_SERVER: user
+      CAPTAIN_SERVER: captain
+      RIDE_SERVER: ride
+      USER_SERVICE_PORT: 3001
+      CAPTAIN_SERVICE_PORT: 3002
+      RIDE_SERVICE_PORT: 3003
+    depends_on:
+      - user
+      - captain
+      - ride
