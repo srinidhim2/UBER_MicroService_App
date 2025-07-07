@@ -20,6 +20,15 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: qwerty
       ME_CONFIG_MONGODB_URL: mongodb://admin:qwerty@mongo:27017
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
   user:
     build: ./user-service
     ports:
@@ -28,9 +37,10 @@ services:
       PORT: 3001
       JWT_SECRET: 123
       MONGO_URL: mongodb://admin:qwerty@mongo:27017/user?authSource=admin
-      RABBIT_URL: amqps://jrvghfxn:D2OuBkB32k6vS1JKd-Qh7yCcY-5ldC-k@leopard.lmq.cloudamqp.com/jrvghfxn
+      RABBIT_URL: amqp://guest:guest@rabbitmq:5672/
     depends_on:
       - mongo
+      - rabbitmq
 
   captain:
     build: ./captain-service
@@ -40,9 +50,10 @@ services:
       PORT: 3002
       JWT_SECRET: 123
       MONGO_URL: mongodb://admin:qwerty@mongo:27017/captain?authSource=admin
-      RABBIT_URL: amqps://jrvghfxn:D2OuBkB32k6vS1JKd-Qh7yCcY-5ldC-k@leopard.lmq.cloudamqp.com/jrvghfxn
+      RABBIT_URL: amqp://guest:guest@rabbitmq:5672/
     depends_on:
       - mongo
+      - rabbitmq
 
   ride:
     build: ./ride-service
@@ -52,10 +63,11 @@ services:
       PORT: 3003
       JWT_SECRET: 123
       MONGO_URL: mongodb://admin:qwerty@mongo:27017/ride?authSource=admin
-      RABBIT_URL: amqps://jrvghfxn:D2OuBkB32k6vS1JKd-Qh7yCcY-5ldC-k@leopard.lmq.cloudamqp.com/jrvghfxn
+      RABBIT_URL: amqp://guest:guest@rabbitmq:5672/
       BASE_URL: http://gateway:3000
     depends_on:
       - mongo
+      - rabbitmq
 
   gateway:
     build: ./gateway
@@ -73,3 +85,4 @@ services:
       - user
       - captain
       - ride
+      - rabbitmq
