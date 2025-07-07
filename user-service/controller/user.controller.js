@@ -90,12 +90,17 @@ module.exports.profile = async (req, res) => {
 
 module.exports.acceptedRide = (req,res,next)=>{
     try{
-        rideEventEmitter.once('ride-accepted',(data)=>{
-            res.send(data)
-        })
-        setTimeout(()=>{
-            res.status(204).send()
-        },30000)
+        rideEventEmitter.once('ride-accepted', (data) => {
+            if (!res.headersSent) {
+                res.send(data);
+            }
+        });
+
+        setTimeout(() => {
+            if (!res.headersSent) {
+                res.status(204).send();
+            }
+        }, 30000);
     }
     catch(error){
         next(error)
